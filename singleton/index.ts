@@ -1,4 +1,4 @@
-import { ApiRequests } from "./api-requests.page";
+import { ApiRequests } from "./api-requests.singleton";
 import { APIRequestContext } from "@playwright/test";
 
 export class AppSingleton {

@@ -1,5 +1,5 @@
-import { iSupport } from "../../interfaces/support.interface";
-import { iUser } from "../../interfaces/users.interface";
+import { iSupport } from "../../types/interfaces/support.interface";
+import { iUser } from "../../types/interfaces/users.interface";
 
 const singleUserData: iUser = {
   id: 2,
