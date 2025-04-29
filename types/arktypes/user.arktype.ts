@@ -1,5 +1,6 @@
 import { type as t } from "arktype";
 import { Support } from "./support.arktype";
+import { listMetaData } from "./listMetaData.arktype";
 
 export const BodyUserData = t({
   id: "number > 0",
@@ -15,13 +16,7 @@ export const schemaUser = t({
 });
 
 export const schemaUsersList = t({
-  page: "number > 0",
-  per_page: "number > 0",
-  total: "number > 0",
-  total_pages: "number > 0",
+  "...": listMetaData,
   data: BodyUserData.array(),
   support: Support,
 });
-
-// export type tUserBody = typeof UserBody["infer"];
-// export type tUsersListBody = typeof UsersListBody["infer"];
