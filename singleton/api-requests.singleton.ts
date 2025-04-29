@@ -11,63 +11,37 @@ export class ApiRequests {
     this.baseHeaders = { "x-api-key": "reqres-free-v1" };
   }
 
-  async getUserById(id: number): Promise<{
-    status: number;
-    body: iSingleUserResponse;
-  }> {
-    const response = await this.request.get(`users/${id}`, {
+  async getById(collection: string, id: number): Promise<APIResponse> {
+    return await this.request.get(`${collection}/${id}`, {
       headers: this.baseHeaders,
     });
-    return {
-      status: response.status(),
-      body: await response.json(),
-    };
   }
 
-  async getUsersList(
+  async getList(
+    collection: string,
     page?: number | undefined,
     perPage?: number | undefined
-  ): Promise<{
-    status: number;
-    body: iUsersListResponse;
-  }> {
-    let response: APIResponse;
+  ): Promise<APIResponse> {
+    let path: string;
 
     switch (true) {
       case page !== undefined && perPage !== undefined:
-        response = await this.request.get(
-          `users?page=${page}&per_page=${perPage}`,
-          {
-            headers: this.baseHeaders,
-          }
-        );
+        path = `${collection}?page=${page}&per_page=${perPage}`;
         break;
 
       case page !== undefined:
-        response = await this.request.get(`users?page=${page}`, {
-          headers: this.baseHeaders,
-        });
+        path = `${collection}?page=${page}`;
         break;
 
       case perPage !== undefined:
-        response = await this.request.get(`users?per_page=${perPage}`, {
-          headers: this.baseHeaders,
-        });
+        path = `${collection}?per_page=${perPage}`;
         break;
 
       default:
-        response = await this.request.get(`users`, {
-          headers: this.baseHeaders,
-        });
+        path = `${collection}`;
     }
 
-    const bodyData: iUsersListResponse = await response.json();
-
-    return { status: response.status(), body: bodyData };
-  }
-
-  async getResourceById(id: number): Promise<APIResponse> {
-    return await this.request.get(`unknown/${id}`, {
+    return await this.request.get(path, {
       headers: this.baseHeaders,
     });
   }

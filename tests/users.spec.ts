@@ -16,16 +16,17 @@ const userListTestData = [
   [undefined, undefined],
 ];
 
-test.describe(`Get tets`, () => {
+test.describe(`Get users tets`, () => {
   test(`Get single user by id`, async ({ app }) => {
-    const apiResponse = await app.apiRequests.getUserById(userId);
-    expect(apiResponse.status).toBe(200);
+    const apiResponse = await app.apiRequests.getById("users", userId);
+    const apiResponseBody = await apiResponse.json();
+    expect(apiResponse.status()).toBe(200);
 
     // const dataUserId2 = jsonUserId2;
     // expect(apiResponse.body).toEqual(dataUserId2);
     // console.log("dataUserId2: " + dataUserId2);
 
-    expect(apiResponse.body.data).toEqual(
+    expect(apiResponseBody.data).toEqual(
       expect.objectContaining({
         id: userId,
         email: userEmail,
@@ -33,7 +34,7 @@ test.describe(`Get tets`, () => {
       })
     );
 
-    const outputValidation = schemaUser(apiResponse.body) instanceof t.errors;
+    const outputValidation = schemaUser(apiResponseBody) instanceof t.errors;
     expect(outputValidation).toBe(false);
   });
 
@@ -42,11 +43,16 @@ test.describe(`Get tets`, () => {
       test(`Get list of users. page = ${page}. perPage = ${perPage}  .`, async ({
         app,
       }) => {
-        const apiResponse = await app.apiRequests.getUsersList(page, perPage);
+        const apiResponse = await app.apiRequests.getList(
+          "users",
+          page,
+          perPage
+        );
+        const apiResponseBody = await apiResponse.json();
         const outputValidation =
-          schemaUsersList(apiResponse.body) instanceof t.errors;
+          schemaUsersList(apiResponseBody) instanceof t.errors;
 
-        expect(apiResponse.status).toBe(200);
+        expect(apiResponse.status()).toBe(200);
         expect(outputValidation).toBe(false);
       });
     }
@@ -55,9 +61,11 @@ test.describe(`Get tets`, () => {
   test(`Get user not found by id`, async ({ app }) => {
     userId = 222;
 
-    const apiResponse = await app.apiRequests.getUserById(userId);
-    expect(apiResponse.status).toBe(404);
-    expect(apiResponse.body).toEqual({});
+    const apiResponse = await app.apiRequests.getById("users", userId);
+    const apiResponseBody = await apiResponse.json();
+
+    expect(apiResponse.status()).toBe(404);
+    expect(apiResponseBody).toEqual({});
   });
 });
 
