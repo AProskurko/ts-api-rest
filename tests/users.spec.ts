@@ -2,13 +2,19 @@ import { expect } from "@playwright/test";
 import { test } from "../fixtures/base";
 import { type as t } from "arktype";
 import jsonUserId2 from "../tests/test-data/json-files/user-id2.json";
-import { schemaUser, schemaUsersList } from "../types/arktypes/user.arktype";
+import {
+  schemaUser,
+  schemaUsersList,
+  schemaUserCreate,
+} from "../types/arktypes/user.arktype";
 
 let userId: number = 2;
 let userEmail: string = "janet.weaver@reqres.in";
 let userAvatar: string = "https://reqres.in/img/faces/2-image.jpg";
 let page: number | undefined = 2;
 let perPage: number | undefined = 3;
+let userName: string = "Bob";
+let userJob: string = "Boss";
 const userListTestData = [
   [2, 3],
   [2, undefined],
@@ -36,6 +42,7 @@ test.describe(`Get users tets`, () => {
 
     const outputValidation = schemaUser(apiResponseBody) instanceof t.errors;
     expect(outputValidation).toBe(false);
+    console.log(apiResponse);
   });
 
   test.describe(`Get list of users`, () => {
@@ -66,6 +73,22 @@ test.describe(`Get users tets`, () => {
 
     expect(apiResponse.status()).toBe(404);
     expect(apiResponseBody).toEqual({});
+  });
+
+  test.describe.serial(`Create, update, delete user`, () => {
+    test(`Create new user`, async ({ app }) => {
+      const apiResponse = await app.apiRequests.post(
+        "users",
+        userName,
+        userJob
+      );
+      const apiResponseBody = await apiResponse.json();
+      expect(apiResponse.status()).toBe(201);
+
+      const outputValidation =
+        schemaUserCreate(apiResponseBody) instanceof t.errors;
+      expect(outputValidation).toBe(false);
+    });
   });
 });
 
