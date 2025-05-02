@@ -1,8 +1,4 @@
 import { APIRequestContext, APIResponse } from "@playwright/test";
-import {
-  iSingleUserResponse,
-  iUsersListResponse,
-} from "../types/interfaces/users.interface";
 
 export class ApiRequests {
   private readonly baseHeaders: Record<string, string>;
@@ -11,10 +7,27 @@ export class ApiRequests {
     this.baseHeaders = { "x-api-key": "reqres-free-v1" };
   }
 
+  /*
+   * @description: error handler for APi requests
+   */
+  private async errorHandler<T>(method: () => Promise<T>): Promise<T> {
+    try {
+      return await method();
+    } catch (error) {
+      console.error("Error in API request: ", error);
+      throw error;
+    }
+  }
+
+  /*
+   * @description: get method for single user and resource
+   */
   async getById(collection: string, id: number): Promise<APIResponse> {
-    return await this.request.get(`${collection}/${id}`, {
-      headers: this.baseHeaders,
-    });
+    return this.errorHandler(() =>
+      this.request.get(`${collection}/${id}`, {
+        headers: this.baseHeaders,
+      })
+    );
   }
 
   async getList(
@@ -41,10 +54,26 @@ export class ApiRequests {
         path = `${collection}`;
     }
 
-    return await this.request.get(path, {
-      headers: this.baseHeaders,
-    });
+    return this.errorHandler(() =>
+      this.request.get(path, {
+        headers: this.baseHeaders,
+      })
+    );
+  }
+
+  async post(
+    collection: string,
+    name: string,
+    job: string
+  ): Promise<APIResponse> {
+    return this.errorHandler(() =>
+      this.request.post(`${collection}`, {
+        headers: this.baseHeaders,
+        data: {
+          name: name,
+          job: job,
+        },
+      })
+    );
   }
 }
-
-
