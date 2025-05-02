@@ -20,3 +20,10 @@ export const schemaUsersList = t({
   data: BodyUserData.array(),
   support: Support,
 });
+
+export const schemaUserCreate = t({
+  name: "string.alpha",
+  job: "string.alpha",
+  id: "string",
+  createdAt: "string",
+});
