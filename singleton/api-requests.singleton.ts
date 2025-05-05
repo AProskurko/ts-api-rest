@@ -76,4 +76,46 @@ export class ApiRequests {
       })
     );
   }
+
+  async put(
+    collection: string,
+    id: number,
+    name: string,
+    job: string
+  ): Promise<APIResponse> {
+    return this.errorHandler(() =>
+      this.request.put(`${collection}/${id}`, {
+        headers: this.baseHeaders,
+        data: {
+          name: name,
+          job: job,
+        },
+      })
+    );
+  }
+
+  async patch(
+    collection: string,
+    id: number,
+    name: string,
+    job: string
+  ): Promise<APIResponse> {
+    return this.errorHandler(() =>
+      this.request.put(`${collection}/${id}`, {
+        headers: this.baseHeaders,
+        data: {
+          name: name,
+          job: job,
+        },
+      })
+    );
+  }
+
+  async delete(collection: string, id: number): Promise<APIResponse> {
+    return this.errorHandler(() =>
+      this.request.put(`${collection}/${id}`, {
+        headers: this.baseHeaders,
+      })
+    );
+  }
 }
