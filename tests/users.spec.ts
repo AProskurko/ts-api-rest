@@ -2,17 +2,11 @@ import { expect } from "@playwright/test";
 import { test } from "../fixtures/base";
 import { type as t } from "arktype";
 import jsonUserId2 from "../tests/test-data/json-files/user-id2.json";
-import {
-  schemaUser,
-  schemaUsersList,
-  schemaUserCreate,
-} from "../types/arktypes/user.arktype";
+import * as aUser from "../types/arktypes/user.arktype";
 
 let userId: number = 2;
 let userEmail: string = "janet.weaver@reqres.in";
 let userAvatar: string = "https://reqres.in/img/faces/2-image.jpg";
-let page: number | undefined = 2;
-let perPage: number | undefined = 3;
 let userName: string = "Bob";
 let userJob: string = "Boss";
 const userListTestData = [
@@ -28,10 +22,6 @@ test.describe(`Get users tets`, () => {
     const apiResponseBody = await apiResponse.json();
     expect(apiResponse.status()).toBe(200);
 
-    // const dataUserId2 = jsonUserId2;
-    // expect(apiResponse.body).toEqual(dataUserId2);
-    // console.log("dataUserId2: " + dataUserId2);
-
     expect(apiResponseBody.data).toEqual(
       expect.objectContaining({
         id: userId,
@@ -40,9 +30,9 @@ test.describe(`Get users tets`, () => {
       })
     );
 
-    const outputValidation = schemaUser(apiResponseBody) instanceof t.errors;
+    const outputValidation =
+      aUser.schemaUser(apiResponseBody) instanceof t.errors;
     expect(outputValidation).toBe(false);
-    console.log(apiResponse);
   });
 
   test.describe(`Get list of users`, () => {
@@ -57,7 +47,7 @@ test.describe(`Get users tets`, () => {
         );
         const apiResponseBody = await apiResponse.json();
         const outputValidation =
-          schemaUsersList(apiResponseBody) instanceof t.errors;
+          aUser.schemaUsersList(apiResponseBody) instanceof t.errors;
 
         expect(apiResponse.status()).toBe(200);
         expect(outputValidation).toBe(false);
@@ -75,21 +65,75 @@ test.describe(`Get users tets`, () => {
     expect(apiResponseBody).toEqual({});
   });
 
-  test.describe.serial(`Create, update, delete user`, () => {
-    test(`Create new user`, async ({ app }) => {
-      const apiResponse = await app.apiRequests.post(
+  test(`Create new user`, async ({ app }) => {
+    const apiResponse = await app.apiRequests.post("users", userName, userJob);
+    const apiResponseBody = await apiResponse.json();
+    expect(apiResponse.status()).toBe(201);
+
+    const outputValidation =
+      aUser.schemaUserCreate(apiResponseBody) instanceof t.errors;
+    expect(outputValidation).toBe(false);
+  });
+
+  test.describe(`Update user`, () => {
+    const currentYearMonth = new Date().toISOString().slice(0, 7);
+    const updateDate = new RegExp(`^${currentYearMonth}`);
+
+    test(`Update user via put`, async ({ app }) => {
+      userName += "Put";
+      userJob += "Put";
+
+      const apiResponse = await app.apiRequests.put(
         "users",
+        userId,
         userName,
         userJob
       );
       const apiResponseBody = await apiResponse.json();
-      expect(apiResponse.status()).toBe(201);
+      expect(apiResponse.status()).toBe(200);
+
+      expect(apiResponseBody).toEqual(
+        expect.objectContaining({
+          name: userName,
+          job: userJob,
+          updatedAt: expect.stringMatching(updateDate),
+        })
+      );
 
       const outputValidation =
-        schemaUserCreate(apiResponseBody) instanceof t.errors;
+        aUser.schemaUserUpdate(apiResponseBody) instanceof t.errors;
+      expect(outputValidation).toBe(false);
+    });
+
+    test(`Update user via patch`, async ({ app }) => {
+      userName += "Patch";
+      userJob += "Patch";
+      const apiResponse = await app.apiRequests.patch(
+        "users",
+        userId,
+        userName,
+        userJob
+      );
+      const apiResponseBody = await apiResponse.json();
+      expect(apiResponse.status()).toBe(200);
+
+      expect(apiResponseBody).toEqual(
+        expect.objectContaining({
+          name: userName,
+          job: userJob,
+          updatedAt: expect.stringMatching(updateDate),
+        })
+      );
+
+      const outputValidation =
+        aUser.schemaUserUpdate(apiResponseBody) instanceof t.errors;
       expect(outputValidation).toBe(false);
     });
   });
+
+  test(`Delete user by id`, async ({ app }) => {
+    const apiResponse = await app.apiRequests.delete("users", userId);
+    const apiResponseBody = await apiResponse.json();
+    expect(apiResponse.status()).toBe(200);
+  });
 });
-
-

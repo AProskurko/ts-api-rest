@@ -27,3 +27,9 @@ export const schemaUserCreate = t({
   id: "string",
   createdAt: "string",
 });
+
+export const schemaUserUpdate = t({
+  name: "string",
+  job: "string",
+  updatedAt: "string",
+});

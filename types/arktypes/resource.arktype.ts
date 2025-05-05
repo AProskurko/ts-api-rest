@@ -20,3 +20,16 @@ export const SchemaResourceList = t({
   data: BodyResourceData.array(),
   support: Support,
 });
+
+export const SchemaResourceCreate = t({
+  name: "string.alpha",
+  job: "string.alpha",
+  id: "string",
+  createdAt: "string",
+});
+
+export const SchemaUserUpdate = t({
+  name: "string",
+  job: "string",
+  updatedAt: "string",
+});
