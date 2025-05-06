@@ -7,7 +7,8 @@ import {
   SchemaResourceList,
 } from "../types/arktypes/resource.arktype";
 
-let resourceId = 2;
+const collection: string = "unknown";
+let resourceId: number = 2;
 const resourceListTestData = [
   [2, 3],
   [2, undefined],
@@ -17,7 +18,7 @@ const resourceListTestData = [
 
 test.describe(`Get resources tests`, () => {
   test(`Get resource by id`, async ({ app }) => {
-    const response = await app.apiRequests.getById("{resource}", resourceId);
+    const response = await app.apiRequests.getById(collection, resourceId);
     const responseBody = await response.json();
     // const responseSupport: Support = responseBody.support
 
@@ -40,7 +41,7 @@ test.describe(`Get resources tests`, () => {
         app,
       }) => {
         const apiResponse = await app.apiRequests.getList(
-          "unknown",
+          collection,
           page,
           perPage
         );
@@ -57,7 +58,7 @@ test.describe(`Get resources tests`, () => {
   test(`Get resource not found by id`, async ({ app }) => {
     resourceId = 23;
 
-    const apiResponse = await app.apiRequests.getById("unknown", resourceId);
+    const apiResponse = await app.apiRequests.getById(collection, resourceId);
     const apiResponseBody = await apiResponse.json();
 
     expect(apiResponse.status()).toBe(404);

@@ -101,7 +101,7 @@ export class ApiRequests {
     job: string
   ): Promise<APIResponse> {
     return this.errorHandler(() =>
-      this.request.put(`${collection}/${id}`, {
+      this.request.patch(`${collection}/${id}`, {
         headers: this.baseHeaders,
         data: {
           name: name,
@@ -113,7 +113,7 @@ export class ApiRequests {
 
   async delete(collection: string, id: number): Promise<APIResponse> {
     return this.errorHandler(() =>
-      this.request.put(`${collection}/${id}`, {
+      this.request.delete(`${collection}/${id}`, {
         headers: this.baseHeaders,
       })
     );

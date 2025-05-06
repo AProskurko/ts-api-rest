@@ -133,7 +133,6 @@ test.describe(`Get users tets`, () => {
 
   test(`Delete user by id`, async ({ app }) => {
     const apiResponse = await app.apiRequests.delete("users", userId);
-    const apiResponseBody = await apiResponse.json();
-    expect(apiResponse.status()).toBe(200);
+    expect(apiResponse.status()).toBe(204);
   });
 });
