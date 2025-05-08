@@ -118,4 +118,36 @@ export class ApiRequests {
       })
     );
   }
+
+  async register(email: string, password: string): Promise<APIResponse> {
+    return this.errorHandler(() =>
+      this.request.post(`register`, {
+        headers: this.baseHeaders,
+        data: {
+          email: email,
+          password: password,
+        },
+      })
+    );
+  }
+
+  async login(email: string, password: string): Promise<APIResponse> {
+    return this.errorHandler(() =>
+      this.request.post(`login`, {
+        headers: this.baseHeaders,
+        data: {
+          email: email,
+          password: password,
+        },
+      })
+    );
+  }
+
+  async logout(): Promise<APIResponse> {
+    return this.errorHandler(() =>
+      this.request.post(`logout`, {
+        headers: this.baseHeaders,
+      })
+    );
+  }
 }
